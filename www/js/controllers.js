@@ -41,8 +41,17 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
+.controller('PlaylistsCtrl', function($scope, PlaylistData) {
+  $scope.playlists = PlaylistData.playlists;
+})
+
+.controller('PlaylistCtrl', function($scope, $stateParams, PlaylistData) {
+  $scope.playlist = PlaylistData.getPlaylistById($stateParams.playlistId);
+})
+
+.factory('PlaylistData', function(){
+
+  var playlists = [
     { title: 'Reggae', id: 1 },
     { title: 'Chill', id: 2 },
     { title: 'Dubstep', id: 3 },
@@ -50,7 +59,19 @@ angular.module('starter.controllers', [])
     { title: 'Rap', id: 5 },
     { title: 'Cowbell', id: 6 }
   ];
-})
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+  var playlistData = {};
+  playlistData.playlists = playlists;
+
+  playlistData.getPlaylistById = function(playlistId){
+    for ( var i=0; i < playlists.length; i++){
+      if ( playlists[i].id == playlistId){
+        return playlists[i];
+      }
+    }
+
+    return {};
+  };
+
+    return playlistData;
 });
