@@ -41,37 +41,10 @@ angular.module('eezeestocksApp.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, PlaylistData) {
-  $scope.playlists = PlaylistData.playlists;
+.controller('StocklistCtrl', function($scope, StocklistData) {
+  $scope.stocks = StocklistData.stocks;
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams, PlaylistData) {
-  $scope.playlist = PlaylistData.getPlaylistById($stateParams.playlistId);
-})
-
-.factory('PlaylistData', function(){
-
-  var playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-
-  var playlistData = {};
-  playlistData.playlists = playlists;
-
-  playlistData.getPlaylistById = function(playlistId){
-    for ( var i=0; i < playlists.length; i++){
-      if ( playlists[i].id == playlistId){
-        return playlists[i];
-      }
-    }
-
-    return {};
-  };
-
-    return playlistData;
+.controller('StockCtrl', function($scope, $stateParams, StocklistData) {
+  $scope.stock = StocklistData.getStockByTicker($stateParams.stockTicker);
 });
