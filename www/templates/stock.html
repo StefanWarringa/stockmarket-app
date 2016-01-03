@@ -4,15 +4,15 @@
 
     <div class="buttons" side="left">
       <div class="button button-clear">
-        <h6>Company name Inc.</h6>
+        <h6>{{stock.company}}.</h6>
       </div>
     </div>
 
-    <h2 class="title button-left button-right">1000.5000</h2>
+    <h2 class="title button-left button-right">{{stock.price}}</h2>
 
     <div class="buttons" side="right">
       <div class="button button-clear">
-        <h6>+100.0000%</h6>
+        <h6>{{marketdata.ChangeInPercent}}</h6>
       </div>
     </div>
   </div>
@@ -22,8 +22,12 @@
     <div class="card">
       <div class="item item-divider">Market Data</div>
       <div class="row row-center">
-        <div class="col">Data:</div>
-        <div class="col">1000.5000</div>
+        <div class="col">Sale:</div>
+        <div class="col">{{marketdata.PriceSales}}</div>
+      </div>
+      <div class="row row-center">
+        <div class="col">Change:</div>
+        <div class="col">{{marketdata.ChangeinPercent}}</div>
       </div>
     </div>
 

@@ -46,7 +46,33 @@
   }
 
   function stockController($scope, $stateParams, StocklistData) {
-    $scope.stock = StocklistData.getStockByTicker($stateParams.stockTicker);
+
+    function getPriceData(ticker){
+      $scope.stock =
+        StocklistData
+        .getStockByTicker(ticker)
+        .then(function(stockquote){
+          $scope.stock = {
+            ticker: stockquote.symbol,
+            price: stockquote.price,
+            company: stockquote.name
+          };
+        });
+    }
+
+    function getDetailsData(ticker){
+      $scope.stock =
+        StocklistData
+        .getStockDetails(ticker)
+        .then(function(stockdetails){
+          $scope.marketdata = stockdetails;
+        });
+    }
+    $scope.$on("$ionicView.afterEnter", function(){
+      var ticker = $stateParams.stockTicker;
+      getPriceData(ticker);
+      getDetailsData(ticker);
+    });
   }
 
 
