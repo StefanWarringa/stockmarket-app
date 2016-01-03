@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('eezeestocksApp.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
