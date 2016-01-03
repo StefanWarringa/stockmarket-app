@@ -42,7 +42,7 @@ angular.module('eezeestocksApp',
   })
 
   .state('app.stock', {
-    url: '/stock/:stockTicker',
+    url: '/stocks/:stockTicker',
     views: {
       'menuContent': {
         templateUrl: 'templates/stock.html',
