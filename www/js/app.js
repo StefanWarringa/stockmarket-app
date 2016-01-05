@@ -3,6 +3,7 @@ angular.module('eezeestocksApp',
   'ionic',
   'eezeestocksApp.services',
   'eezeestocksApp.controllers',
+  'eezeestocksApp.filters',
   'nvd3',
   'nvChart'
 ])

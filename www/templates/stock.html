@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <h2 class="title button-left button-right">{{pricedata.price}}</h2>
+    <h2 class="title button-left button-right">{{pricedata.price | shrinkNumber:2}}</h2>
 
     <div class="buttons" side="right">
       <div class="button button-clear">
@@ -41,33 +41,33 @@
       <div class="item item-divider">Market Data</div>
       <div class="row row-center">
         <div class="col">Ask:</div>
-        <div class="col">{{marketdata.Ask}}</div>
+        <div class="col">{{marketdata.Ask | shrinkNumber:2}}</div>
         <div class="col">Bid:</div>
-        <div class="col">{{marketdata.Bid}}</div>
+        <div class="col">{{marketdata.Bid | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
         <div class="col">Prev. close:</div>
-        <div class="col">{{marketdata.PreviousClose}}</div>
+        <div class="col">{{marketdata.PreviousClose | shrinkNumber:2}}</div>
         <div class="col">Open:</div>
-        <div class="col">{{marketdata.Open}}</div>
+        <div class="col">{{marketdata.Open | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
         <div class="col">Day's high:</div>
-        <div class="col">{{pricedata.day_high}}</div>
+        <div class="col">{{pricedata.day_high | shrinkNumber:2}}</div>
         <div class="col">Day's low:</div>
-        <div class="col">{{pricedata.day_low}}</div>
+        <div class="col">{{pricedata.day_low | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
         <div class="col">52w high:</div>
-        <div class="col">{{marketdata.YearHigh}}</div>
+        <div class="col">{{marketdata.YearHigh | shrinkNumber:2}}</div>
         <div class="col">52w low:</div>
-        <div class="col">{{marketdata.YearLow}}</div>
+        <div class="col">{{marketdata.YearLow | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
         <div class="col">Volume:</div>
-        <div class="col">{{pricedata.volume}}</div>
+        <div class="col">{{pricedata.volume | shrinkNumber:2}}</div>
         <div class="col">Avg. volume:</div>
-        <div class="col">{{marketdata.AverageDailyVolume}}</div>
+        <div class="col">{{marketdata.AverageDailyVolume | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
         <div class="col">Market cap:</div>
