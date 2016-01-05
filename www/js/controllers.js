@@ -45,7 +45,64 @@
     $scope.stocks = StocklistData.stocks;
   }
 
-  function stockController($scope, $stateParams, StocklistData) {
+  function stockController($scope, $stateParams, $filter, StocklistData, chartDataService) {
+
+    // See: https://raw.githubusercontent.com/j3ko/nv-chart/master/examples/linePlusBarWithFocusChart.html
+    var xTickFormat = function(d) {
+      var dx = $scope.chartData[0].values[d] && $scope.chartData[0].values[d].x || 0;
+      if (dx > 0) {
+        return d3.time.format('%x')(new Date(dx));
+      }
+      return null;
+    };
+
+    var x2TickFormat = function(d) {
+      var dx = $scope.chartData[0].values[d] && $scope.chartData[0].values[d].x || 0;
+      return d3.time.format('%x')(new Date(dx));
+    };
+
+    var y1TickFormat = function(d) {
+      return d3.format(',f')(d);
+    };
+
+    var y2TickFormat = function(d) {
+      return '$' + d3.format(',.2f')(d);
+    };
+
+    var y3TickFormat = function(d) {
+      return d3.format(',f')(d);
+    };
+
+    var y4TickFormat = function(d) {
+      return '$' + d3.format(',.2f')(d);
+    };
+
+    var xValueFunction = function(d, i) {
+      return i;
+    };
+
+
+    var chartOptions = {
+      chartType: 'linePlusBarWithFocusChart',
+      data: 'chartData',
+      color: d3.scale.category10().range(),
+      margin: {
+        top: 30,
+        right: 60,
+        bottom: 50,
+        left: 70
+      },
+      useInteractiveGuideline: true,
+      xValue: xValueFunction,
+      xAxisTickFormat: xTickFormat,
+      x2AxisTickFormat: x2TickFormat,
+      y1AxisTickFormat: y1TickFormat,
+      y2AxisTickFormat: y2TickFormat,
+      y3AxisTickFormat: y3TickFormat,
+      y4AxisTickFormat: y4TickFormat,
+      transitionDuration: 500
+    };
+
 
     function getPriceData(ticker){
       $scope.stock =
@@ -64,6 +121,40 @@
           $scope.marketdata = stockdetails;
         });
     }
+
+    function getChartData(ticker) {
+      var currentDate = $filter('date')(new Date(),'yyyy-MM-dd');
+      var oneYearAgo = $filter('date')(new Date().setDate(new Date().getDate() - 365),'yyyy-MM-dd');
+
+      chartDataService
+      .getHistoricalData(ticker,oneYearAgo,currentDate)
+      .then(function(dataSeries){
+        var volumeData = []; volumeData.push(dataSeries.volumeData);
+        var priceData = []; priceData.push(dataSeries.priceData);
+
+        $scope.chartData = [
+    			{
+    				key : "volume" ,
+    				bar: true,
+    				values : dataSeries.volumeData
+    			},
+    			{
+    				key : "ticker" ,
+    				values : dataSeries.priceData
+    			}
+        ].map(function(series) {
+  				series.values = series.values.map(function(d) {
+            return {x: d[0], y: d[1] };
+          });
+  				return series;
+  			});
+
+        $scope.chartOptions = chartOptions;
+
+        //console.log($scope.chartData);
+      });
+    }
+
     $scope.$on("$ionicView.afterEnter", function(){
       var ticker = $stateParams.stockTicker;
 
@@ -71,6 +162,7 @@
       $scope.chartview = 1;
       getPriceData(ticker);
       getDetailsData(ticker);
+      getChartData(ticker);
     });
   }
 
@@ -78,5 +170,5 @@
 angular.module('eezeestocksApp.controllers', [])
   .controller('AppCtrl', ['$scope', '$ionicModal', '$timeout', applicationController])
   .controller('StocklistCtrl', ['$scope', 'StocklistData', stockListController])
-  .controller('StockCtrl', ['$scope', '$stateParams', 'StocklistData', stockController]);
+  .controller('StockCtrl', ['$scope', '$stateParams', '$filter', 'StocklistData', 'ChartDataService', stockController]);
 }());

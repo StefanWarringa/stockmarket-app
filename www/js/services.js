@@ -4,13 +4,13 @@
 
         function yahooQuotesServiceURL(symbol){
           return 'http://finance.yahoo.com/webservice/v1/symbols/' + symbol + '/quote?format=json&view=detail';
-        };
+        }
 
         function yahooQuotesDetailsServiceURL(symbol){
           return 'http://query.yahooapis.com/v1/public/yql?q=' +
                   encodeURIComponent("select * from yahoo.finance.quotes where symbol IN ('" + symbol + "')") +
                   '&format=json&env=http://datatables.org/alltables.env';
-        };
+        }
 
         var stocks = [
           { ticker: 'AAPL'},
@@ -60,7 +60,52 @@
         };
   }
 
+  function chartDataService ($q, $http) {
+
+    function yahooHistoricalDataURL(symbol, startDate, endDate) {
+      return  'http://query.yahooapis.com/v1/public/yql?q=' +
+              encodeURIComponent(
+                'select * from yahoo.finance.historicaldata where symbol = "' + symbol +
+                '" and startDate = "' + startDate +
+                '" and endDate = "' + endDate + '"'
+              ) +
+              '&format=json&env=http://datatables.org/alltables.env';
+    }
+
+    function getHistoricalData(ticker, startDate, endDate) {
+      var deferred = $q.defer();
+
+      $http
+      .get(yahooHistoricalDataURL(ticker, startDate, endDate))
+      .success(function(response){
+        var history = response.query.results.quote;
+        var priceData = [], volumeData = [];
+
+        history.forEach(function(dayData){
+          var date = Date.parse(dayData.Date);
+          var price = parseFloat(Math.round(dayData.Close * 100) / 100).toFixed(3);
+          var volume = dayData.Volume;
+
+          volumeData.push([date ,volume]);
+          priceData.push([date ,price]);
+        });
+
+        deferred.resolve({priceData: priceData, volumeData: volumeData});
+      })
+      .error(function(error){
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    return {
+      getHistoricalData : getHistoricalData
+    };
+  }
+
   angular.module('eezeestocksApp.services', [])
-  .factory('StocklistData', stocklistDataService);
+  .factory('StocklistData', stocklistDataService)
+  .factory('ChartDataService', chartDataService);
 
 }());
