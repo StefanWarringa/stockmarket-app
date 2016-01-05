@@ -7,7 +7,9 @@
         };
 
         function yahooQuotesDetailsServiceURL(symbol){
-          return 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20IN%20(%22' + symbol + '%22)&format=json&env=http://datatables.org/alltables.env';
+          return 'http://query.yahooapis.com/v1/public/yql?q=' +
+                  encodeURIComponent("select * from yahoo.finance.quotes where symbol IN ('" + symbol + "')") +
+                  '&format=json&env=http://datatables.org/alltables.env';
         };
 
         var stocks = [
