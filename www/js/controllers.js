@@ -52,11 +52,7 @@
         StocklistData
         .getStockByTicker(ticker)
         .then(function(stockquote){
-          $scope.stock = {
-            ticker: stockquote.symbol,
-            price: stockquote.price,
-            company: stockquote.name
-          };
+          $scope.pricedata = stockquote;
         });
     }
 
@@ -70,6 +66,9 @@
     }
     $scope.$on("$ionicView.afterEnter", function(){
       var ticker = $stateParams.stockTicker;
+
+      $scope.ticker = ticker;
+      $scope.chartview = 1;
       getPriceData(ticker);
       getDetailsData(ticker);
     });

@@ -3,7 +3,7 @@
   function stocklistDataService($q, $http) {
 
         function yahooQuotesServiceURL(symbol){
-          return 'http://finance.yahoo.com/webservice/v1/symbols/' + symbol + '/quote?format=json';
+          return 'http://finance.yahoo.com/webservice/v1/symbols/' + symbol + '/quote?format=json&view=detail';
         };
 
         function yahooQuotesDetailsServiceURL(symbol){
