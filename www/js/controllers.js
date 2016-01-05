@@ -45,20 +45,20 @@
     $scope.stocks = StocklistData.stocks;
   }
 
-  function stockController($scope, $stateParams, $filter, StocklistData, chartDataService) {
+  function stockController($scope, $stateParams, $filter, $window, StocklistData, chartDataService) {
 
     // See: https://raw.githubusercontent.com/j3ko/nv-chart/master/examples/linePlusBarWithFocusChart.html
     var xTickFormat = function(d) {
       var dx = $scope.chartData[0].values[d] && $scope.chartData[0].values[d].x || 0;
       if (dx > 0) {
-        return d3.time.format('%x')(new Date(dx));
+        return d3.time.format('%b %d')(new Date(dx));
       }
       return null;
     };
 
     var x2TickFormat = function(d) {
       var dx = $scope.chartData[0].values[d] && $scope.chartData[0].values[d].x || 0;
-      return d3.time.format('%x')(new Date(dx));
+      return d3.time.format('%b %Y')(new Date(dx));
     };
 
     var y1TickFormat = function(d) {
@@ -66,15 +66,15 @@
     };
 
     var y2TickFormat = function(d) {
-      return '$' + d3.format(',.2f')(d);
+      return '$' + d3.format('s')(d);
     };
 
     var y3TickFormat = function(d) {
-      return d3.format(',f')(d);
+      return d3.format(',2s')(d);
     };
 
     var y4TickFormat = function(d) {
-      return '$' + d3.format(',.2f')(d);
+      return '$' + d3.format(',.2s')(d);
     };
 
     var xValueFunction = function(d, i) {
@@ -87,13 +87,18 @@
       data: 'chartData',
       color: d3.scale.category10().range(),
       margin: {
-        top: 30,
-        right: 60,
-        bottom: 50,
+        top: 15,
+        right: 40,
+        bottom: $window.innerWidth / 10,
         left: 70
       },
-      useInteractiveGuideline: true,
+      interpolate: 'cardinal',
+      useInteractiveGuideline: false,
+      tooltips: false,
+      showLegend: false,
+      useVoronoi: false,
       xValue: xValueFunction,
+      xShowMaxMin: false,
       xAxisTickFormat: xTickFormat,
       x2AxisTickFormat: x2TickFormat,
       y1AxisTickFormat: y1TickFormat,
@@ -159,7 +164,7 @@
       var ticker = $stateParams.stockTicker;
 
       $scope.ticker = ticker;
-      $scope.chartview = 1;
+      $scope.chartview = 4;
       getPriceData(ticker);
       getDetailsData(ticker);
       getChartData(ticker);
@@ -170,5 +175,5 @@
 angular.module('eezeestocksApp.controllers', [])
   .controller('AppCtrl', ['$scope', '$ionicModal', '$timeout', applicationController])
   .controller('StocklistCtrl', ['$scope', 'StocklistData', stockListController])
-  .controller('StockCtrl', ['$scope', '$stateParams', '$filter', 'StocklistData', 'ChartDataService', stockController]);
+  .controller('StockCtrl', ['$scope', '$stateParams', '$filter', '$window', 'StocklistData', 'ChartDataService', stockController]);
 }());
