@@ -88,9 +88,9 @@
       color: d3.scale.category10().range(),
       margin: {
         top: 15,
-        right: 40,
+        right: 0,
         bottom: $window.innerWidth / 10,
-        left: 70
+        left: 0
       },
       interpolate: 'cardinal',
       useInteractiveGuideline: false,
@@ -105,7 +105,10 @@
       y2AxisTickFormat: y2TickFormat,
       y3AxisTickFormat: y3TickFormat,
       y4AxisTickFormat: y4TickFormat,
-      transitionDuration: 500
+      y1AxisLabel: 'Price',
+      y3AxisLabel: 'Volume',
+      transitionDuration: 500,
+      noData: 'Loading data ...'
     };
 
 
@@ -115,6 +118,15 @@
         .getStockByTicker(ticker)
         .then(function(stockquote){
           $scope.pricedata = stockquote;
+
+          /* This is a hack ... */
+          if ( stockquote !== null ) {
+            if ( stockquote.chg_percent >= 0 ) {
+              $scope.reactiveColor = {'background-color': '#33cd5f'};
+            } else {
+              $scope.reactiveColor = {'background-color': '#ef473a'};
+            }
+          }
         });
     }
 

@@ -1,4 +1,6 @@
 <ion-view view-title="My stocks">
+  <ion-nav-view></ion-nav-view>
+
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="stock in stocks track by stock.ticker" ng-href="#/app/stocks/{{stock.ticker}}">

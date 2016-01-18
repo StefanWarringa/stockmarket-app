@@ -1,27 +1,31 @@
-<ion-view view-title="{{pricedate.symbol}}">
+<ion-view view-title="{{ticker}}" drag-content="false">
 
-  <div class="bar bar-subheader bar-light">
+  <ion-nav-bar id="stock-nav-bar" class="bar-dark ng-style:reactiveColor">
+    <ion-nav-back-button></ion-nav-back-button>
+  </ion-nav-bar>
+
+  <div id="stock-subheader-bar" class="bar bar-subheader bar-light" >
 
     <div class="buttons" side="left">
-      <div class="button button-clear">
-        <h6>{{marketdata.Name}}</h6>
+      <div class="button button-clear display-flex">
+        <h6 id="stock-name">{{marketdata.Name}}</h6>
       </div>
     </div>
 
-    <h2 class="title button-left button-right">{{pricedata.price | shrinkNumber:2}}</h2>
+    <h2 id="stock-price" class="title button-left button-right">{{pricedata.price | shrinkNumber:2}}</h2>
 
     <div class="buttons" side="right">
       <div class="button button-clear">
-        <h6>{{marketdata.ChangeinPercent}}</h6>
+        <h6 id="stock-change" ng-class="marketdata.ChangeinPercent < 0 ? 'assertive' : 'balanced'">{{marketdata.ChangeinPercent}}</h6>
       </div>
     </div>
   </div>
 
-  <ion-content class="has-subheader">
+  <ion-content class="has-subheader" scrollbar-y="false">
 
     <div class="card">
       <div class="item item-divider">Trends</div>
-      <div class="button-bar">
+      <div id="short-button-bar" class="button-bar">
         <button ng-click="chartview = 1" class="button" ng-class="chartview ==1 ? 'active' : ''">Day</button>
         <button ng-click="chartview = 2" class="button" ng-class="chartview ==2 ? 'active' : ''">Week</button>
         <button ng-click="chartview = 3" class="button" ng-class="chartview ==3 ? 'active' : ''">3M</button>
@@ -32,54 +36,54 @@
         <img ng-if="chartview == 1" ng-src="http://chart.finance.yahoo.com/z?s={{pricedata.symbol}}&t=1d&q=l&l=on&z=m&a=vm" style="width:100%"></img>
         <img ng-if="chartview == 2" ng-src="http://chart.finance.yahoo.com/z?s={{pricedata.symbol}}&t=5d&q=l&l=on&z=m&a=vm" style="width:100%"></img>
         <img ng-if="chartview == 3" ng-src="http://chart.finance.yahoo.com/z?s={{pricedata.symbol}}&t=3m&q=l&l=on&z=m&a=vm" style="width:100%"></img>
-        <div ng-if="chartview == 4" class="chartStyles" nv-chart="chartOptions" style="height:70vh;width:100%;"></div>
+        <div ng-if="chartview == 4" class="chartStyles" id="interactiveChart" nv-chart="chartOptions"></div>
         <img ng-if="chartview == 5" ng-src="http://chart.finance.yahoo.com/z?s={{pricedata.symbol}}&t=my&q=l&l=on&z=m&a=vm" style="width:100%"></img>
       </div>
     </div>
 
-    <div class="card">
-      <div class="item item-divider">Market Data</div>
+    <div id="market-data-card" lass="card">
+      <div class="item item-divider">Market Data <span class="last-trade">Last trade: {{pricedata.utctime | date:'h:mm a'}}</div>
       <div class="row row-center">
-        <div class="col">Ask:</div>
-        <div class="col">{{marketdata.Ask | shrinkNumber:2}}</div>
-        <div class="col">Bid:</div>
-        <div class="col">{{marketdata.Bid | shrinkNumber:2}}</div>
+        <div class="col col-30">Ask:</div>
+        <div class="col col-20">{{marketdata.Ask | shrinkNumber:2}}</div>
+        <div class="col col-30">Bid:</div>
+        <div class="col col-20">{{marketdata.Bid | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
-        <div class="col">Prev. close:</div>
-        <div class="col">{{marketdata.PreviousClose | shrinkNumber:2}}</div>
-        <div class="col">Open:</div>
-        <div class="col">{{marketdata.Open | shrinkNumber:2}}</div>
+        <div class="col col-30">Prev. close:</div>
+        <div class="col col-20">{{marketdata.PreviousClose | shrinkNumber:2}}</div>
+        <div class="col col-30">Open:</div>
+        <div class="col col-20">{{marketdata.Open | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
-        <div class="col">Day's high:</div>
-        <div class="col">{{pricedata.day_high | shrinkNumber:2}}</div>
-        <div class="col">Day's low:</div>
-        <div class="col">{{pricedata.day_low | shrinkNumber:2}}</div>
+        <div class="col col-30">Day's high:</div>
+        <div class="col col-20">{{pricedata.day_high | shrinkNumber:2}}</div>
+        <div class="col col-30">Day's low:</div>
+        <div class="col col-20">{{pricedata.day_low | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
-        <div class="col">52w high:</div>
-        <div class="col">{{marketdata.YearHigh | shrinkNumber:2}}</div>
-        <div class="col">52w low:</div>
-        <div class="col">{{marketdata.YearLow | shrinkNumber:2}}</div>
+        <div class="col col-30">52w high:</div>
+        <div class="col col-20">{{marketdata.YearHigh | shrinkNumber:2}}</div>
+        <div class="col col-30">52w low:</div>
+        <div class="col col-20">{{marketdata.YearLow | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
-        <div class="col">Volume:</div>
-        <div class="col">{{pricedata.volume | shrinkNumber:2}}</div>
-        <div class="col">Avg. volume:</div>
-        <div class="col">{{marketdata.AverageDailyVolume | shrinkNumber:2}}</div>
+        <div class="col col-30">Volume:</div>
+        <div class="col col-20">{{pricedata.volume | shrinkNumber:2}}</div>
+        <div class="col col-30">Avg. volume:</div>
+        <div class="col col-20">{{marketdata.AverageDailyVolume | shrinkNumber:2}}</div>
       </div>
       <div class="row row-center">
-        <div class="col">Market cap:</div>
-        <div class="col">{{marketdata.MarketCapitalization}}</div>
-        <div class="col">EBITDA:</div>
-        <div class="col">{{marketdata.EBITDA}}</div>
+        <div class="col col-30">Market cap:</div>
+        <div class="col col-20">{{marketdata.MarketCapitalization}}</div>
+        <div class="col col-30">EBITDA:</div>
+        <div class="col col-20">{{marketdata.EBITDA}}</div>
       </div>
       <div class="row row-center">
-        <div class="col">P/E:</div>
-        <div class="col">{{marketdata.PERatio}}</div>
-        <div class="col">EP:</div>
-        <div class="col">{{marketdata.EarningsShare}}</div>
+        <div class="col col-30">P/E:</div>
+        <div class="col col-20">{{marketdata.PERatio}}</div>
+        <div class="col col-30">EP:</div>
+        <div class="col col-20">{{marketdata.EarningsShare}}</div>
       </div>
     </div>
 
