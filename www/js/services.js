@@ -60,7 +60,7 @@
         };
   }
 
-  function chartDataService ($q, $http) {
+  function chartDataService ($q, $http, chartDataCacheService) {
 
     function yahooHistoricalDataURL(symbol, startDate, endDate) {
       return  'http://query.yahooapis.com/v1/public/yql?q=' +
@@ -73,28 +73,37 @@
     }
 
     function getHistoricalData(ticker, startDate, endDate) {
+
+      var chartDataCache = chartDataCacheService.get(ticker);
+
       var deferred = $q.defer();
 
-      $http
-      .get(yahooHistoricalDataURL(ticker, startDate, endDate))
-      .success(function(response){
-        var history = response.query.results.quote;
-        var priceData = [], volumeData = [];
+      if ( chartDataCache) {
+        deferred.resolve(chartDataCache);
+      } else {
+        $http
+        .get(yahooHistoricalDataURL(ticker, startDate, endDate))
+        .success(function(response){
+          var history = response.query.results.quote;
+          var priceData = [], volumeData = [];
 
-        history.forEach(function(dayData){
-          var date = Date.parse(dayData.Date);
-          var price = parseFloat(Math.round(dayData.Close * 100) / 100).toFixed(3);
-          var volume = dayData.Volume;
+          history.forEach(function(dayData){
+            var date = Date.parse(dayData.Date);
+            var price = parseFloat(Math.round(dayData.Close * 100) / 100).toFixed(3);
+            var volume = dayData.Volume;
 
-          volumeData.push([date ,volume]);
-          priceData.push([date ,price]);
+            volumeData.push([date ,volume]);
+            priceData.push([date ,price]);
+          });
+
+          var chartData = {priceData: priceData, volumeData: volumeData};
+          deferred.resolve(chartData);
+          chartDataCacheService.put(ticker, chartData)
+        })
+        .error(function(error){
+          deferred.reject(error);
         });
-
-        deferred.resolve({priceData: priceData, volumeData: volumeData});
-      })
-      .error(function(error){
-        deferred.reject(error);
-      });
+      }
 
       return deferred.promise;
     }
@@ -104,8 +113,27 @@
     };
   }
 
+  function chartDataCacheService(cacheFactory) {
+    var cacheId = 'chartDataCache';
+
+    var chartDataCache;
+
+    if (!cacheFactory.get(cacheId)){
+      chartDataCache = cacheFactory(cacheId, {
+        maxAge: 60 * 60 * 8 * 1000,
+        deleteOnExpire: 'aggressive',
+        storageMode: 'localStorage'
+      });
+    } else {
+      chartDataCache = cacheFactory.get(cacheId);
+    }
+
+    return chartDataCache;
+  }
+
   angular.module('eezeestocksApp.services', [])
-  .factory('StocklistData', stocklistDataService)
-  .factory('ChartDataService', chartDataService);
+  .factory('ChartDataCacheService', ['CacheFactory',chartDataCacheService])
+  .factory('StocklistData', ['$q','$http', stocklistDataService])
+  .factory('ChartDataService', ['$q','$http','ChartDataCacheService',chartDataService]);
 
 }());

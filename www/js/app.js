@@ -5,7 +5,8 @@ angular.module('eezeestocksApp',
   'eezeestocksApp.controllers',
   'eezeestocksApp.filters',
   'nvd3',
-  'nvChart'
+  'nvChart',
+  'angular-cache'
 ])
 
 .run(function($ionicPlatform) {
