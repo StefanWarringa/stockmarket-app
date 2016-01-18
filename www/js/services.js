@@ -1,6 +1,6 @@
 (function(){
 
-  function stocklistDataService($q, $http) {
+  function stocklistDataService($q, $http, stockDetailsCacheService) {
 
         function yahooQuotesServiceURL(symbol){
           return 'http://finance.yahoo.com/webservice/v1/symbols/' + symbol + '/quote?format=json&view=detail';
@@ -38,17 +38,25 @@
         }
 
         function getStockDetails(stockTicker){
+
           var deferred = $q.defer();
 
-          $http
-          .get(yahooQuotesDetailsServiceURL(stockTicker))
-          .success(function(response){
-            var quoteData = response.query.results.quote;
-            deferred.resolve(quoteData);
-          })
-          .error(function(error){
-            deferred.reject(error);
-          });
+          var stockDetailsCached = stockDetailsCacheService.get(stockTicker);
+
+          if (stockDetailsCached) {
+            deferred.resolve(stockDetailsCached);
+          } else {
+            $http
+            .get(yahooQuotesDetailsServiceURL(stockTicker))
+            .success(function(response){
+              var quoteData = response.query.results.quote;
+              deferred.resolve(quoteData);
+              stockDetailsCacheService.put(stockTicker, quoteData);
+            })
+            .error(function(error){
+              deferred.reject(error);
+            });
+          }
 
           return deferred.promise;
         }
@@ -131,9 +139,28 @@
     return chartDataCache;
   }
 
+  function stockDetailsCacheService(cacheFactory) {
+    var cacheId = 'stockDetailsCache';
+
+    var stockDetailsCache;
+
+    if (!cacheFactory.get(cacheId)){
+      stockDetailsCache = cacheFactory(cacheId, {
+        maxAge: 60 * 60 * 8 * 1000,
+        deleteOnExpire: 'aggressive',
+        storageMode: 'localStorage'
+      });
+    } else {
+      stockDetailsCache = cacheFactory.get(cacheId);
+    }
+
+    return stockDetailsCache;
+  }
+
   angular.module('eezeestocksApp.services', [])
   .factory('ChartDataCacheService', ['CacheFactory',chartDataCacheService])
-  .factory('StocklistData', ['$q','$http', stocklistDataService])
+  .factory('StockDetailsCacheService', ['CacheFactory',stockDetailsCacheService])
+  .factory('StocklistData', ['$q','$http', 'StockDetailsCacheService', stocklistDataService])
   .factory('ChartDataService', ['$q','$http','ChartDataCacheService',chartDataService]);
 
 }());
